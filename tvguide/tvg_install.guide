@@ -1,0 +1,15 @@
+How to install TVGuide:
+
+Download ftp://legacy.gsfc.nasa.gov/software/tools/tvguide0_2a.tar.gz .
+
+Copy the file to a suitable directory then
+
+% tar zxvf tvguide0_2a.tar.gz
+
+% make arch=linux
+
+if your machine is a Linux (other possible choices are 'osx' for Mac OS X,
+'solaris' for Sun workstations running Solaris, and 'osf' for Alpha
+workstations running OSF).  You will need a working fortran compiler
+on your machine. It will leave the  executable, tvguide, in the current
+directory.

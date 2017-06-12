@@ -1,0 +1,242 @@
+        subroutine arkopn(iunit, dirname, file, filex, stat, pos, form,
+     &  acces, irecl, flag )
+              
+c       Opens a file with a machine independent call.  This is the VMS
+c       Version.
+                
+c       Returned values.
+c       The number of the unit opened.
+        integer iunit
+                     
+c       Input values.
+c       The file name, and the default extension to be used.
+        character*(*) dirname, file, filex
+c       The status to be used (OLD, NEW or UNKNOWN)
+        character*(*) stat
+c       The position to start writing into the file (APPEND, OVERWRITE,
+c       READONLY).
+        character*(*) pos
+c       The form of the file (FORMATTED, UNFORMATTED or TAPE)
+        character*(*) form
+c       The file access (DIRECT or SEQUENTIAL), need only be supplied if
+c       form is UNFORMATTED.
+        character*(*) acces
+c       The record length (will be divided by 4 for VMS, and the BLOCKSZIE
+c       set to the input record length).  Only used if access is 'DIRECT'.
+        integer irecl
+
+c	error will be flagged with a negative value
+        integer flag
+                     
+c       Locals.
+c       All the above strings translated to upper case.
+        character*160 ufile
+        character*40 ufilex, ustat, upos, uform, uacces
+        integer LENTRIM
+
+        flag = 0
+        ufile = dirname( : LENTRIM( dirname ) ) // file
+        ufilex = filex
+        ustat  = stat
+        upos   = pos
+        uform  = form
+c       Make all the open keywords upper case.
+        call upcase(ustat)
+        call upcase(upos)
+        call upcase(uform)
+        uacces  = 'SEQUENTIAL'
+        if (uform .eq. 'UNFORMATTED') uacces = acces
+        call upcase(uacces)
+c       We had better check that pos has a legal value, as the operating
+c       system won't tell us!
+        if (upos  .eq. 'APPEND') then
+          uacces = 'APPEND'
+        else if (upos.ne.'READONLY' .and. upos.ne.'OVERWRITE') then
+c          print*, 'ARK S/R ARKOPN called in illegal value for POS.'
+c          print*, 'POS was "'//pos(1:len(pos))//'"'
+          goto 900
+        end if
+              
+c       Get a free unit.
+        call GETLUN( iunit )
+
+c       The hard work is done here.
+        if (uform .eq. 'TAPE') then 
+          open (unit=iunit, status='OLD', form='UNFORMATTED', 
+     &    access='SEQUENTIAL', file=ufile, recordtype='variable',
+     &    err=900)
+        else if (uacces .ne. 'DIRECT') then
+          if (upos .ne. 'READONLY') then
+            if (uform .eq. 'FORMATTED') then
+              open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &        defaultfile='.'//ufilex, file=ufile, 
+     &        carriagecontrol='list', err=900)
+            else
+              open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &        defaultfile='.'//ufilex, file=ufile, err=900)
+            end if
+          else
+            if (uform .eq. 'FORMATTED') then
+              open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &        defaultfile='.'//ufilex, file=ufile, readonly,
+     &        carriagecontrol='list',err=900)
+            else
+              open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &        defaultfile='.'//ufilex, file=ufile, readonly,err=900)
+            end if
+          end if
+        else
+c         Direct access.   Assume this is always unformatted.
+          if (upos .eq. 'READONLY') then
+            open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &      recl=irecl/4, blocksize=irecl, defaultfile='.'//ufilex,
+     &      file=ufile, readonly,err=900)
+          else
+            open (unit=iunit, status=ustat, form=uform, access=uacces,
+     &      recl=irecl/4, blocksize=irecl, defaultfile='.'//ufilex,
+     &      file=ufile,err=900)
+          end if
+        end if
+        return
+
+900     continue
+        flag = -99
+
+        end
+
+
+        subroutine PWRITE( string )
+
+        integer pw_lun
+        logical pw_open
+        common / pw_cmmn / pw_lun, pw_open
+
+        character*( * ) string
+
+        integer LENTRIM
+
+        write( *, '('' '',a)' ) string( : LENTRIM( string ) )
+        if( pw_open ) write( pw_lun, '(a)', err=900 )
+     &                                     string( : LENTRIM( string ) )
+        return
+
+ 900    continue
+        print *, 'ERROR writing to log file, closing log'
+        close( pw_lun )
+        pw_open = .false.
+
+        end
+
+
+
+        subroutine PWRITEL( string )
+
+        integer pw_lun
+        logical pw_open
+        common / pw_cmmn / pw_lun, pw_open
+
+        character*( * ) string
+
+        integer LENTRIM
+
+        if( pw_open ) write( pw_lun, '(a)', err=900 )
+     &                                     string( : LENTRIM( string ) )
+        return
+
+ 900    continue
+        print *, 'ERROR writing to log file, closing log'
+        close( pw_lun )
+        pw_open = .false.
+
+        end
+
+
+
+        subroutine PWOPEN( name )
+
+        integer pw_lun
+        logical pw_open
+        common / pw_cmmn / pw_lun, pw_open
+
+        character*( * ) name
+
+        integer flag
+
+        if( pw_open ) then
+          print *, 'Log file already open'
+          return
+        end if
+
+        call ARKOPN( pw_lun, ' ', name, 'log', 'NEW', 'OVERWRITE',
+     &               'FORMATTED', 'SEQUENTIAL', 1, flag )
+
+        if( flag .lt. 0 ) then
+          print *, 'ERROR:: failed to open the log file'
+        else
+          pw_open = .true.
+        end if
+
+        end
+
+
+
+        subroutine PWCLOS( )
+
+        integer pw_lun
+        logical pw_open
+        common / pw_cmmn / pw_lun, pw_open
+
+        close( pw_lun )
+        pw_open = .false.
+
+        end
+
+
+
+        block data PWCOMMN
+
+        integer pw_lun
+        logical pw_open
+        common / pw_cmmn / pw_lun, pw_open
+
+        data pw_lun / 99 /
+        data pw_open / .false. /
+
+        end
+
+
+
+        subroutine WRITEN( string )
+
+        implicit none
+
+        character*( * ) string
+
+        integer LENTRIM
+
+        write( *, 100 ) string( : LENTRIM( string ) )
+100     format( ' ', a, ' ', $ )
+
+        end
+
+
+
+        subroutine SPAWN( cline )
+
+        implicit none
+
+        character*( * ) cline
+
+        call LIB$SPAWN( cline )
+
+        end
+
+
+
+        subroutine ARKGCL( string )
+
+        character*( * ) string
+
+        call LIB$GET_FOREIGN( string )
+
+        end
