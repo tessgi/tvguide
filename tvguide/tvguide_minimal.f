@@ -1,25 +1,25 @@
 !*==TVGUIDE_MINIMAL
-      subroutine TVGUIDE_MINIMAL(in_ra, in_dec, intvls)
+      subroutine TVGUIDEF(in_ra, in_dec, dstart, intvls)
 
       IMPLICIT NONE
 Cf2py intent(in) :: alpha, delta 
 Cf2py intent(out) :: intvls
 
-!      Provisional name for a provisional subroutine that provides
+!      A provisional subroutine that provides
 !      information about TESS visibility of potential targets
 !      
 !      Originally written by Koji Mukai for the TESS Science Support
 !      Center 2017.
 !      
-!      Tom Barclay - I modfied for use in f2py
+!      Tom Barclay - I modfied for use in in a python module using f2py
 
-*-TVGUIDE_MINIMAL
+*-TVGUIDEF
     
-      DOUBLE PRECISION DEG2RAD , RAD2DEG, vec_angle
+      DOUBLE PRECISION DEG2RAD , RAD2DEG, VEC_ANGLE
       PARAMETER (DEG2RAD=0.01745329252D+00)
       PARAMETER (RAD2DEG=57.29577951D+00)
 
-      DOUBLE PRECISION lambda1 , step
+      DOUBLE PRECISION lambda1 , step, dstart
       DOUBLE PRECISION edge , corner , gapx , gapy
       DOUBLE PRECISION in_ra , in_dec , alpha , delta , jd
       DOUBLE PRECISION lambda , beta , lambda_ , beta0 , lambda0
@@ -50,6 +50,8 @@ Cf2py intent(out) :: intvls
       ENDDO
 
       CALL TO_ECLIP(alpha,delta,jd,lambda,beta)
+
+      lambda1 = lambda1 + dstart
 
       IF ( beta.LE.c1limit ) THEN
          DO j = 1 , 13
