@@ -11,7 +11,7 @@ We will move this to pypi soon but for now
 ```
 
 then pick your favorite star and have a whirl. I'm a big fan of Alpha Centauri
-``` bash
+``` 
 > tvguide 219.9009 -60.8356
 
 Success! The target may be observable by TESS during Cycle 1.
