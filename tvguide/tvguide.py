@@ -44,6 +44,17 @@ class TessPointing(object):
         """
         return tvguidef(self.ra_deg, self.dec_deg, self.dstart)
 
+    def get_camera(self):
+        """
+        which camera is the star on?
+        """
+        cams = self.get_13cameras()
+        cams = cams[cams > 0]
+        if np.shape(cams)[0] > 0:
+            return int(np.median(cams))
+        else:
+            return 0
+
     def get_numcampaigns(self):
         """
         returns an integer of how many sectors a target is observable
@@ -66,6 +77,9 @@ class TessPointing(object):
         return (int(np.max(outarr)), int(np.min(outarr)),
                 int(np.median(outarr)), np.mean(outarr))
 
+
+def parse_file():
+    pass
 
 def tvguide(args=None):
     """
@@ -91,8 +105,12 @@ def tvguide(args=None):
               " during Cycle 1.\nBut may be observable in Cycle 2" +
               Highlight.END)
     elif tessObj.is_observable() == 2:
-        print(Highlight.GREEN + "Success! The target may be observable by TESS"
-              " during Cycle 1." + Highlight.END)
+        print(Highlight.GREEN +
+              "Success! The target may be observable by TESS during Cycle 1." +
+              Highlight.END)
+        print(Highlight.GREEN +
+              "Looks like it may fall into Camera {}.".format(
+                  tessObj.get_camera()) + Highlight.END)
 
         outlst = tessObj.get_maxminmedave()
         print(Highlight.GREEN + "We can observe this source for:" +
@@ -107,12 +125,34 @@ def tvguide(args=None):
             outlst[3]) + Highlight.END)
 
 
-def tvguide_fromfile(args=None):
-    pass
+# def tvguide_csv(args=None):
+#     """
+#     exposes tvguide-csv to the command line
+#     """
+#     parser = argparse.ArgumentParser(
+#         description="Determine whether targets are observable using TESS.")
+#     parser.add_argument('input_filename', nargs=1, type=str,
+#                         help="Path to a comma-separated table containing "
+#                              "columns 'ra, dec' (decimal degrees) "
+#                              "or 'TIC number'.")
+#     args = parser.parse_args(args)
+#     input_fn = args.input_filename[0]
+#     output_fn = input_fn + '-tvguide.csv'
+#     # First, try assuming the file has the classic "ra, dec format
+#     try:
+#         ra, dec = parse_file(input_fn, exit_on_error=False)
+#         campaigns = np.array([findCampaigns(ra[idx], dec[idx])
+#                               for idx in range(len(ra))])
+#         output = np.array([ra, dec, kepmag, campaigns])
+#         print("Writing {0}.".format(output_fn))
+#         np.savetxt(output_fn, output.T, delimiter=', ',
+#                    fmt=['%10.10f', '%10.10f', '%10.2f', '%s'])
+#     # If this fails, assume the file has a single "name" column
+#     except ValueError:
+#         pass
 
-
-def tvguide_fromtic(args=None):
-    pass
+# def tvguide_fromtic(args=None):
+#     pass
 
 
 if __name__ == '__main__':
