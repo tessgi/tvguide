@@ -9,30 +9,24 @@ if "publish" in sys.argv[-1]:
 
 # Define the Fortran extension.
 tvguide = Extension("tvguide._tvguide",
-    ["tvguide/tvguide_minimal.f",
-     "tvguide/sys.f",
-     "tvguide/eclip.f",
-     "tvguide/cartesian.f",
-     "tvguide/getlun.f",
-     "tvguide/julian.f",
-     "tvguide/lentrim.f",
-     "tvguide/nutate.f",
-     "tvguide/upcase.f"])
+                    ["tvguide/tvguide_minimal.f",
+                     "tvguide/sys.f",
+                     "tvguide/eclip.f",
+                     "tvguide/cartesian.f",
+                     "tvguide/getlun.f",
+                     "tvguide/julian.f",
+                     "tvguide/lentrim.f",
+                     "tvguide/nutate.f",
+                     "tvguide/upcase.f"])
 
 # Load the __version__ variable without importing the package
 exec(open('tvguide/version.py').read())
 
-# # Command-line tools
-# entry_points = {'console_scripts': [
-#     'kpub = kpub:kpub',
-#     'kpub-update = kpub:kpub_update',
-#     'kpub-add = kpub:kpub_add',
-#     'kpub-delete = kpub:kpub_delete',
-#     'kpub-import = kpub:kpub_import',
-#     'kpub-export = kpub:kpub_export',
-#     'kpub-plot = kpub:kpub_plot',
-#     'kpub-spreadsheet = kpub:kpub_spreadsheet'
-# ]}
+# Command-line tools
+# we use scripts because entry_points doesn't seem to work
+# with numpy.distutils
+scripts = ['scripts/tvguide',
+           ]
 
 setup(name='tvguide',
       version=__version__,
@@ -43,14 +37,14 @@ setup(name='tvguide',
       license='MIT',
       url='https://github.com/tessgi/tvguide',
       packages=['tvguide'],
-      ext_modules=[tvguide,],
+      ext_modules=[tvguide, ],
       # data_files=[('kpub/templates', ['kpub/templates/template.md',
       #                  'kpub/templates/template-overview.md'])],
       # install_requires=["jinja2",
       #                   "six",
       #                   "astropy",
       #                   "ads"],
-      # entry_points=entry_points,
+      scripts=scripts,
       classifiers=[
               "Development Status :: 3 - Alpha",
               "License :: OSI Approved :: MIT License",
