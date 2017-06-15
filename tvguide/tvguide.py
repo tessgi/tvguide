@@ -107,5 +107,13 @@ def tvguide(args=None):
             outlst[3]) + Highlight.END)
 
 
+def tvguide_fromfile(args=None):
+    pass
+
+
+def tvguide_fromtic(args=None):
+    pass
+
+
 if __name__ == '__main__':
     pass
