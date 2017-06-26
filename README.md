@@ -30,15 +30,18 @@ You can also run on a file with targets
 currently implemented is using RA and Dec.
 ``` 
 > head inputfilename.csv
+
 150., -60.
 10., -75.
 51., 0.
 88., +65
 
 > tvguide-csv inputfilename.csv
+
 Writing example-file.csv-tvguide.csv.
 
 >head example-file.csv-tvguide.csv
+
 150.0000000000, -60.0000000000, 2
 10.0000000000, -75.0000000000, 2
 51.0000000000, 0.0000000000, 2
