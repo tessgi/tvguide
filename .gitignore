@@ -136,3 +136,5 @@ ENV/
 *.app
 
 *.dSYM/
+
+# for now don't include examples
