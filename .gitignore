@@ -137,5 +137,7 @@ ENV/
 
 *.dSYM/
 
+MANIFEST
+
 # for now don't include examples
 examples/
