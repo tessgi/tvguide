@@ -26,6 +26,7 @@ exec(open('tvguide/version.py').read())
 # we use scripts because entry_points doesn't seem to work
 # with numpy.distutils
 scripts = ['scripts/tvguide',
+           'scripts/tvguide-csv',
            ]
 
 setup(name='tvguide',

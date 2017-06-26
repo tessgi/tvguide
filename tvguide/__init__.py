@@ -1,6 +1,9 @@
 from __future__ import (division, print_function, absolute_import,
                         unicode_literals)
 
+import logging
+logging.basicConfig()  # Avoid "No handlers could be found for logger" warning
+logger = logging.getLogger(__name__)
 
 from .version import __version__
 

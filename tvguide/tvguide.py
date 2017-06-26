@@ -7,6 +7,8 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 from . import Highlight
 
+from . import logger
+
 
 class TessPointing(object):
 
@@ -78,8 +80,27 @@ class TessPointing(object):
                 int(np.median(outarr)), np.mean(outarr))
 
 
-def parse_file():
-    pass
+def parse_file(infile, exit_on_error=True):
+    """Parse a comma-separated file with columns "ra,dec,magnitude".
+    """
+    try:
+        a, b = np.atleast_2d(
+                            np.genfromtxt(
+                                        infile,
+                                        usecols=[0, 1],
+                                        delimiter=','
+                                        )
+                    ).T
+    except IOError as e:
+        if exit_on_error:
+            logger.error("There seems to be a problem with the input file, "
+                         "the format should be: RA_degrees (J2000), Dec_degrees (J2000). "
+                         "There should be no header, columns should be "
+                         "separated by a comma")
+            sys.exit(1)
+        else:
+            raise e
+    return a, b
 
 def tvguide(args=None):
     """

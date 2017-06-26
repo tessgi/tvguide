@@ -7,7 +7,7 @@ To run, simply type "py.test".
 def test_import():
     """Can we import tvguide successfully?"""
     import tvguide
-
-
+    from tvguide import tvguide
+    from tvguide import tvguide_csv
     
 
