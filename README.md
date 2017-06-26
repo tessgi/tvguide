@@ -3,10 +3,17 @@
 A tool for determining whether stars and galaxies are observable by TESS.
 
 [![Travis status](http://img.shields.io/travis/tessgi/tvguide/master.svg)](http://travis-ci.org/tessgi/tvguide)
+[![PyPI](http://img.shields.io/pypi/v/tvguide.svg)](https://pypi.python.org/pypi/tvguide/)
 
 ## Installation
-We will move this to pypi soon but for now
+You can install using pip
 
+
+``` bash
+> pip install tvguide --upgrade
+```
+
+or via the github repository
 ``` bash
 > git clone https://github.com/tessgi/tvguide.git
 > cd tvguide
