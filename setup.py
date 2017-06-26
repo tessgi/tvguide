@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
+import setuptools
 from numpy.distutils.core import setup, Extension
 
 if "publish" in sys.argv[-1]:
