@@ -138,3 +138,4 @@ ENV/
 *.dSYM/
 
 # for now don't include examples
+examples/
