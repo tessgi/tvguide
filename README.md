@@ -10,7 +10,7 @@ You can install using pip
 
 
 ``` bash
-> pip install tvguide --update
+> pip install tvguide --upgrade
 ```
 
 or via the github repository
