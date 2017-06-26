@@ -162,12 +162,12 @@ def tvguide_csv(args=None):
     # First, try assuming the file has the classic "ra, dec format
     try:
         ra, dec = parse_file(input_fn, exit_on_error=False)
-        campaigns = np.array([findCampaigns(ra[idx], dec[idx])
+        observable = np.array([TessPointing(ra[idx], dec[idx]).is_observable()
                               for idx in range(len(ra))])
-        output = np.array([ra, dec, kepmag, campaigns])
+        output = np.array([ra, dec, observable])
         print("Writing {0}.".format(output_fn))
         np.savetxt(output_fn, output.T, delimiter=', ',
-                   fmt=['%10.10f', '%10.10f', '%10.2f', '%s'])
+                   fmt=['%10.10f', '%10.10f', '%i'])
     # If this fails, assume the file has a single "name" column
     except ValueError:
         raise NotImplementedError

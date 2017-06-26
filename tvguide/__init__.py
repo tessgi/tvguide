@@ -19,4 +19,4 @@ class Highlight:
     END = '\033[0m'
 
 # this needs to come after the Highlight import
-from .tvguide import tvguide, TessPointing
+from .tvguide import tvguide, TessPointing, tvguide_csv
