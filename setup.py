@@ -5,7 +5,9 @@ import setuptools
 from numpy.distutils.core import setup, Extension
 
 if "publish" in sys.argv[-1]:
-    os.system("python setup.py sdist upload")
+    os.system("python setup.py sdist")
+    os.system("twine upload dist/*")
+    os.system("rm -rf dist/*")
     sys.exit()
 
 # Define the Fortran extension.
