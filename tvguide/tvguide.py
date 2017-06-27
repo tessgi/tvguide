@@ -162,9 +162,11 @@ def tvguide_csv(args=None):
     # First, try assuming the file has the classic "ra, dec format
     try:
         ra, dec = parse_file(input_fn, exit_on_error=False)
-        observable = np.array([TessPointing(ra[idx], dec[idx]).is_observable()
-                              for idx in range(len(ra))])
-        output = np.array([ra, dec, observable])
+        minC = np.zeros_like(ra, dtype=int)
+        for idx in range(len(ra)):
+            tobj = TessPointing(ra[idx], dec[idx])
+            minC = tobj.get_maxminmedave[1]
+        output = np.array([ra, dec, minC,])
         print("Writing {0}.".format(output_fn))
         np.savetxt(output_fn, output.T, delimiter=', ',
                    fmt=['%10.10f', '%10.10f', '%i'])

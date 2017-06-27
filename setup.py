@@ -18,7 +18,10 @@ tvguide = Extension("tvguide._tvguide",
                      "tvguide/julian.f",
                      "tvguide/lentrim.f",
                      "tvguide/nutate.f",
-                     "tvguide/upcase.f"])
+                     "tvguide/upcase.f",
+                     "tvguide/tvguide.inc"])
+
+
 
 # Load the __version__ variable without importing the package
 exec(open('tvguide/version.py').read())
