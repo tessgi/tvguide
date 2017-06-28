@@ -47,12 +47,9 @@ Writing example-file.csv-tvguide.csv.
 
 >head example-file.csv-tvguide.csv
 
-150.0000000000, -60.0000000000, 2
-10.0000000000, -75.0000000000, 2
-51.0000000000, 0.0000000000, 2
-88.0000000000, 65.0000000000, 1
+150.0000000000, -60.0000000000, 0, 2
+10.0000000000, -75.0000000000, 1, 3
+51.0000000000, 0.0000000000, 0, 1
+88.0000000000, 65.0000000000, 0, 0
 ```
-This new file appends another column with values 0, 1 or 2. 
-* 2 = May be observable in Cycle 1 (you should propose for these targets)
-* 1 = May be observable in Cycle 2
-* 0 = not observable in Cycle 1 or 2
+This new file appends two additional columns. The number in the first column is the minimum number of sectors the target is observable for and the second is the maximum.

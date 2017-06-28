@@ -134,7 +134,7 @@ def tvguide(args=None):
                   tessObj.get_camera()) + Highlight.END)
 
         outlst = tessObj.get_maxminmedave()
-        print(Highlight.GREEN + "We can observe this source for:" +
+        print(Highlight.GREEN + "Each sector is 27.4 days. We can observe this source for:" +
               Highlight.END)
         print(Highlight.GREEN + "    maximum: {0} sectors".format(
             outlst[0]) + Highlight.END)
