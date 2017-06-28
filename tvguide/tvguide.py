@@ -166,7 +166,7 @@ def tvguide_csv(args=None):
         for idx in range(len(ra)):
             tobj = TessPointing(ra[idx], dec[idx])
             minC = tobj.get_maxminmedave[1]
-        output = np.array([ra, dec, minC,])
+        output = np.array([ra, dec, minC])
         print("Writing {0}.".format(output_fn))
         np.savetxt(output_fn, output.T, delimiter=', ',
                    fmt=['%10.10f', '%10.10f', '%i'])
