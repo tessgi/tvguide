@@ -151,7 +151,7 @@ def tvguide_csv(args=None):
     exposes tvguide-csv to the command line
     """
     parser = argparse.ArgumentParser(
-        description="Determine whether targets are observable using TESS.")
+        description="Determine whether targets in a csv are observable using TESS.")
     parser.add_argument('input_filename', nargs=1, type=str,
                         help="Path to a comma-separated table containing "
                              "columns 'ra, dec' (decimal degrees) "
@@ -163,13 +163,15 @@ def tvguide_csv(args=None):
     try:
         ra, dec = parse_file(input_fn, exit_on_error=False)
         minC = np.zeros_like(ra, dtype=int)
+        maxC = np.zeros_like(ra, dtype=int)
         for idx in range(len(ra)):
             tobj = TessPointing(ra[idx], dec[idx])
-            minC = tobj.get_maxminmedave[1]
-        output = np.array([ra, dec, minC])
-        print("Writing {0}.".format(output_fn))
+            minC[idx] = tobj.get_maxminmedave()[1]
+            maxC[idx] = tobj.get_maxminmedave()[0]
+        output = np.array([ra, dec, minC, maxC])
+        print("Writing {0}".format(output_fn))
         np.savetxt(output_fn, output.T, delimiter=', ',
-                   fmt=['%10.10f', '%10.10f', '%i'])
+                   fmt=['%10.10f', '%10.10f', '%i', '%i'])
     # If this fails, assume the file has a single "name" column
     except ValueError:
         raise NotImplementedError
