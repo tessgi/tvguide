@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 from .version import __version__
 
-
 class Highlight:
     """Defines colors for highlighting words in the terminal."""
     RED = "\033[0;31m"
