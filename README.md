@@ -55,3 +55,8 @@ Writing example-file.csv-tvguide.csv.
 88.0000000000, 65.0000000000, 0, 0
 ```
 This new file appends two additional columns. The number in the first column is the minimum number of sectors the target is observable for and the second is the maximum.
+
+## Citation
+If you find this code useful and want to cite it in your research then we have made that possible for you
+```
+Mukai, K. & Barclay, T. 2017, tvguide: A tool for determining whether stars and galaxies are observable by TESS., v1.0.0, Zenodo, doi:10.5281/zenodo.823357
