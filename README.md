@@ -8,8 +8,6 @@ A tool for determining whether stars and galaxies are observable by TESS.
 
 
 ## Installation
-This will work in Python 2.7 and Python 3.x
-
 You can install using pip
 ``` bash
 $ pip install tvguide --upgrade
@@ -21,6 +19,8 @@ $ git clone https://github.com/tessgi/tvguide.git
 $ cd tvguide
 $ python setup.py install
 ```
+
+The code has been tested in Python 2.7, 3.5, and 3.6.
 
 ## Usage
 Pick your favorite star and have a whirl. I'm a big fan of Alpha Centauri
