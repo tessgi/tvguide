@@ -8,6 +8,8 @@ A tool for determining whether stars and galaxies are observable by TESS.
 
 
 ## Installation
+This will work in Python 2.7 and Python 3.x
+
 You can install using pip
 ``` bash
 $ pip install tvguide --upgrade
