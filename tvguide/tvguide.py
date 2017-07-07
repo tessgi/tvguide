@@ -102,6 +102,7 @@ def parse_file(infile, exit_on_error=True):
             raise e
     return a, b
 
+
 def tvguide(args=None):
     """
     exposes tvguide to the command line
@@ -178,6 +179,75 @@ def tvguide_csv(args=None):
 
 # def tvguide_fromtic(args=None):
 #     pass
+
+
+def check_observable(ra, dec):
+    """
+    Determine whether targets are observable using TESS.
+    Wrapper for tvguide.tvguide for use in Python scripts.
+
+    example
+    -------
+    from tvguide import listing
+    listing(234.56, -78.9)
+    """
+
+    tessObj = TessPointing(ra, dec)
+
+    if tessObj.is_observable() == 0:
+        print(Highlight.RED + "Sorry, the target is not observable by TESS"
+              "during Cycle 1 or 2." + Highlight.END)
+    elif tessObj.is_observable() == 1:
+        print(Highlight.RED + "Sorry, the target is not observable by TESS"
+              " during Cycle 1.\nBut may be observable in Cycle 2" +
+              Highlight.END)
+    elif tessObj.is_observable() == 2:
+        print(Highlight.GREEN +
+              "Success! The target may be observable by TESS during Cycle 1." +
+              Highlight.END)
+        print(Highlight.GREEN +
+              "Looks like it may fall into Camera {}.".format(
+                  tessObj.get_camera()) + Highlight.END)
+
+        outlst = tessObj.get_maxminmedave()
+        print(Highlight.GREEN + "Each sector is 27.4 days. We can observe this source for:" +
+              Highlight.END)
+        print(Highlight.GREEN + "    maximum: {0} sectors".format(
+            outlst[0]) + Highlight.END)
+        print(Highlight.GREEN + "    minimum: {0} sectors".format(
+            outlst[1]) + Highlight.END)
+        print(Highlight.GREEN + "    median:  {0} sectors".format(
+            outlst[2]) + Highlight.END)
+        print(Highlight.GREEN + "    average: {0:0.2f} sectors".format(
+            outlst[3]) + Highlight.END)
+
+    return
+
+
+def check_many(ra, dec, output_fn=''):
+    """
+    Determines whether many targets are observable with TESS. Returns columns:
+        [ra, dec, min campaigns, max campaigns]
+
+    If an output filename (e.g. output_fn='example.csv') is set, a csv fie is written.
+
+    Wrapper for tvguide.tvguide_csv for use in Python scripts.
+    """
+
+    minC = np.zeros_like(ra, dtype=int)
+    maxC = np.zeros_like(ra, dtype=int)
+    for idx in range(len(ra)):
+        tobj = TessPointing(ra[idx], dec[idx])
+        minC[idx] = tobj.get_maxminmedave()[1]
+        maxC[idx] = tobj.get_maxminmedave()[0]
+    output = np.array([ra, dec, minC, maxC])
+
+    if (len(output_fn) > 0):
+        print("Writing {0}".format(output_fn))
+        np.savetxt(output_fn, output.T, delimiter=', ',
+                   fmt=['%10.10f', '%10.10f', '%i', '%i'])
+    else:
+        return output.T
 
 
 if __name__ == '__main__':

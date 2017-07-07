@@ -10,20 +10,20 @@ A tool for determining whether stars and galaxies are observable by TESS.
 ## Installation
 You can install using pip
 ``` bash
-> pip install tvguide --upgrade
+$ pip install tvguide --upgrade
 ```
 
 or via the github repository
 ``` bash
-> git clone https://github.com/tessgi/tvguide.git
-> cd tvguide
-> python setup.py install
+$ git clone https://github.com/tessgi/tvguide.git
+$ cd tvguide
+$ python setup.py install
 ```
 
 ## Usage
 Pick your favorite star and have a whirl. I'm a big fan of Alpha Centauri
-``` 
-> tvguide 219.9009 -60.8356
+```
+$ tvguide 219.9009 -60.8356
 
 Success! The target may be observable by TESS during Cycle 1.
 We can observe this source for:
@@ -35,19 +35,19 @@ We can observe this source for:
 
 You can also run on a file with targets
 currently implemented is using RA and Dec.
-``` 
-> head inputfilename.csv
+```
+$ head inputfilename.csv
 
 150., -60.
 10., -75.
 51., 0.
 88., +65
 
-> tvguide-csv inputfilename.csv
+$ tvguide-csv inputfilename.csv
 
 Writing example-file.csv-tvguide.csv.
 
->head example-file.csv-tvguide.csv
+$ head example-file.csv-tvguide.csv
 
 150.0000000000, -60.0000000000, 0, 2
 10.0000000000, -75.0000000000, 1, 3
@@ -55,6 +55,15 @@ Writing example-file.csv-tvguide.csv.
 88.0000000000, 65.0000000000, 0, 0
 ```
 This new file appends two additional columns. The number in the first column is the minimum number of sectors the target is observable for and the second is the maximum.
+
+You can also run from within a Python script:
+```python
+import tvguide
+
+tvguide.check_observable(150.00, -60.00)
+
+tvguide.check_many(ra_array, dec_array)
+```
 
 ## Citation
 If you find this code useful and want to cite it in your research then we have made that possible for you
