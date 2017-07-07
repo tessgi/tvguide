@@ -85,12 +85,12 @@ def parse_file(infile, exit_on_error=True):
     """
     try:
         a, b = np.atleast_2d(
-                            np.genfromtxt(
-                                        infile,
-                                        usecols=[0, 1],
-                                        delimiter=','
-                                        )
-                    ).T
+            np.genfromtxt(
+                infile,
+                usecols=[0, 1],
+                delimiter=','
+            )
+        ).T
     except IOError as e:
         if exit_on_error:
             logger.error("There seems to be a problem with the input file, "
@@ -117,34 +117,9 @@ def tvguide(args=None):
     args = parser.parse_args(args)
     ra, dec = args.ra[0], args.dec[0]
 
-    tessObj = TessPointing(ra, dec)
+    check_observable(ra, dec)
 
-    if tessObj.is_observable() == 0:
-        print(Highlight.RED + "Sorry, the target is not observable by TESS"
-              "during Cycle 1 or 2." + Highlight.END)
-    elif tessObj.is_observable() == 1:
-        print(Highlight.RED + "Sorry, the target is not observable by TESS"
-              " during Cycle 1.\nBut may be observable in Cycle 2" +
-              Highlight.END)
-    elif tessObj.is_observable() == 2:
-        print(Highlight.GREEN +
-              "Success! The target may be observable by TESS during Cycle 1." +
-              Highlight.END)
-        print(Highlight.GREEN +
-              "Looks like it may fall into Camera {}.".format(
-                  tessObj.get_camera()) + Highlight.END)
-
-        outlst = tessObj.get_maxminmedave()
-        print(Highlight.GREEN + "Each sector is 27.4 days. We can observe this source for:" +
-              Highlight.END)
-        print(Highlight.GREEN + "    maximum: {0} sectors".format(
-            outlst[0]) + Highlight.END)
-        print(Highlight.GREEN + "    minimum: {0} sectors".format(
-            outlst[1]) + Highlight.END)
-        print(Highlight.GREEN + "    median:  {0} sectors".format(
-            outlst[2]) + Highlight.END)
-        print(Highlight.GREEN + "    average: {0:0.2f} sectors".format(
-            outlst[3]) + Highlight.END)
+    return
 
 
 def tvguide_csv(args=None):
@@ -175,6 +150,7 @@ def tvguide_csv(args=None):
                    fmt=['%10.10f', '%10.10f', '%i', '%i'])
     # If this fails, assume the file has a single "name" column
     except ValueError:
+        # this will eventually take a tic id
         raise NotImplementedError
 
 # def tvguide_fromtic(args=None):
@@ -188,8 +164,8 @@ def check_observable(ra, dec):
 
     example
     -------
-    from tvguide import listing
-    listing(234.56, -78.9)
+    from tvguide import check_observable
+    check_observable(234.56, -78.9)
     """
 
     tessObj = TessPointing(ra, dec)
@@ -210,7 +186,9 @@ def check_observable(ra, dec):
                   tessObj.get_camera()) + Highlight.END)
 
         outlst = tessObj.get_maxminmedave()
-        print(Highlight.GREEN + "Each sector is 27.4 days. We can observe this source for:" +
+        print(Highlight.GREEN +
+              "Each sector is 27.4 days." +
+              " We can observe this source for:" +
               Highlight.END)
         print(Highlight.GREEN + "    maximum: {0} sectors".format(
             outlst[0]) + Highlight.END)
@@ -229,7 +207,8 @@ def check_many(ra, dec, output_fn=''):
     Determines whether many targets are observable with TESS. Returns columns:
         [ra, dec, min campaigns, max campaigns]
 
-    If an output filename (e.g. output_fn='example.csv') is set, a csv fie is written.
+    If an output filename (e.g. output_fn='example.csv') is set,
+        a csv fie is written.
 
     Wrapper for tvguide.tvguide_csv for use in Python scripts.
     """
