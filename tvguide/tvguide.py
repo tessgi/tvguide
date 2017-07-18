@@ -94,7 +94,6 @@ def parse_file(infile, exit_on_error=True):
             )
         ).T
     except IOError as e:
-        print "<p>DEBUGGING:  Got an exception in parse_file();  calling logger.<p>"
         logger.error("There seems to be a problem with the input file, "
                      "the format should be: RA_degrees (J2000), Dec_degrees (J2000). "
                      "There should be no header, columns should be "
@@ -176,16 +175,13 @@ def check_observable(ra, dec,silent=False):
     tessObj = TessPointing(ra, dec)
 
     if tessObj.is_observable() == 0 and not silent:
-        #print "<p>DEBUGGING:  got is_observable()==0 for RA=%s,DEC=%s</p>"%(ra,dec)
         print(Highlight.RED + "Sorry, the target is not observable by TESS"
               "during Cycle 1 or 2." + Highlight.END)
     elif tessObj.is_observable() == 1 and not silent:
-       # print "<p>DEBUGGING:  got is_observable()==1 for RA=%s,DEC=%s</p>"%(ra,dec)
         print(Highlight.RED + "Sorry, the target is not observable by TESS"
               " during Cycle 1.\nBut may be observable in Cycle 2" +
               Highlight.END)
     elif tessObj.is_observable() == 2:
-        #print "<p>DEBUGGING:  got is_observable()==2 for RA=%s,DEC=%s</p>"%(ra,dec)
         outlst = tessObj.get_maxminmedave()
         outlst = outlst + (tessObj.get_camera(),)
         if silent:  return outlst
@@ -209,8 +205,6 @@ def check_observable(ra, dec,silent=False):
             outlst[2]) + Highlight.END)
         print(Highlight.GREEN + "    average: {0:0.2f} sectors".format(
             outlst[3]) + Highlight.END)
-
-    #print "<p>DEBUGGING: returning is_observable() for RA=%s,DEC=%s</p>"%(ra,dec)
 
     return tessObj.is_observable()
 
