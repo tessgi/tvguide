@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import numpy as np
 from ._tvguide import tvguidef
-import argparse
+import argparse,sys
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from . import Highlight
@@ -88,15 +88,17 @@ def parse_file(infile, exit_on_error=True):
             np.genfromtxt(
                 infile,
                 usecols=[0, 1],
-                delimiter=','
+                delimiter=',',
+                comments='#',
+                dtype="f8"
             )
         ).T
     except IOError as e:
+        logger.error("There seems to be a problem with the input file, "
+                     "the format should be: RA_degrees (J2000), Dec_degrees (J2000). "
+                     "There should be no header, columns should be "
+                     "separated by a comma")
         if exit_on_error:
-            logger.error("There seems to be a problem with the input file, "
-                         "the format should be: RA_degrees (J2000), Dec_degrees (J2000). "
-                         "There should be no header, columns should be "
-                         "separated by a comma")
             sys.exit(1)
         else:
             raise e
@@ -107,19 +109,18 @@ def tvguide(args=None):
     """
     exposes tvguide to the command line
     """
-    parser = argparse.ArgumentParser(
-        description="Determine whether targets are observable using TESS.")
-    parser.add_argument('ra', nargs=1, type=float,
-                        help="Right Ascension in decimal degrees (J2000).")
-    parser.add_argument('dec', nargs=1, type=float,
-                        help="Declination in decimal degrees (J2000).")
+    if args is None:
+        parser = argparse.ArgumentParser(
+            description="Determine whether targets are observable using TESS.")
+        parser.add_argument('ra', nargs=1, type=float,
+                            help="Right Ascension in decimal degrees (J2000).")
+        parser.add_argument('dec', nargs=1, type=float,
+                            help="Declination in decimal degrees (J2000).")
+        args = parser.parse_args(args)
 
-    args = parser.parse_args(args)
     ra, dec = args.ra[0], args.dec[0]
 
-    check_observable(ra, dec)
-
-    return
+    return check_observable(ra, dec)
 
 
 def tvguide_csv(args=None):
@@ -157,27 +158,34 @@ def tvguide_csv(args=None):
 #     pass
 
 
-def check_observable(ra, dec):
-    """
-    Determine whether targets are observable using TESS.
+def check_observable(ra, dec,silent=False):
+    """Determine whether targets are observable using TESS.
     Wrapper for tvguide.tvguide for use in Python scripts.
 
-    example
+    Give an RA and DEC, returns either int 0 or 1 if not observable at
+    all or not in cycle 1, or returns a set of four: maximum, minimum,
+    median, and average number of times observed.
+
     -------
     from tvguide import check_observable
     check_observable(234.56, -78.9)
+
     """
 
     tessObj = TessPointing(ra, dec)
 
-    if tessObj.is_observable() == 0:
+    if tessObj.is_observable() == 0 and not silent:
         print(Highlight.RED + "Sorry, the target is not observable by TESS"
               "during Cycle 1 or 2." + Highlight.END)
-    elif tessObj.is_observable() == 1:
+    elif tessObj.is_observable() == 1 and not silent:
         print(Highlight.RED + "Sorry, the target is not observable by TESS"
               " during Cycle 1.\nBut may be observable in Cycle 2" +
               Highlight.END)
     elif tessObj.is_observable() == 2:
+        outlst = tessObj.get_maxminmedave()
+        outlst = outlst + (tessObj.get_camera(),)
+        if silent:  return outlst
+
         print(Highlight.GREEN +
               "Success! The target may be observable by TESS during Cycle 1." +
               Highlight.END)
@@ -185,7 +193,6 @@ def check_observable(ra, dec):
               "Looks like it may fall into Camera {}.".format(
                   tessObj.get_camera()) + Highlight.END)
 
-        outlst = tessObj.get_maxminmedave()
         print(Highlight.GREEN +
               "Each sector is 27.4 days." +
               " We can observe this source for:" +
@@ -199,7 +206,7 @@ def check_observable(ra, dec):
         print(Highlight.GREEN + "    average: {0:0.2f} sectors".format(
             outlst[3]) + Highlight.END)
 
-    return
+    return tessObj.is_observable()
 
 
 def check_many(ra, dec, output_fn=''):
