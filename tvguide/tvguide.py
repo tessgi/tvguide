@@ -41,8 +41,8 @@ class TessPointing(object):
         returns an array of thirteen integers
             the value of each integer ranges from 0-4
             with 0 meaning not observable, and the integer
-            refering to the camera if the target is observale
-            13 valies, one for each sector in Cycle 1
+            refering to the camera if the target is observable
+            13 values, one for each sector in Cycle 1
         """
         return tvguidef(self.ra_deg, self.dec_deg, self.dstart)
 
