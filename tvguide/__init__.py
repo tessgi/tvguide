@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 from .version import __version__
 
 class Highlight:
-    if os.path.basename(__main__.__file__).strip(".py").startswith("wtg"):
-        RED=GREEN=YELLOW=BLUE=PURPLE=CYAN=END=""
-    else:
+    # if os.path.basename(__main__.__file__).strip(".py").startswith("wtg"):
+    #     RED=GREEN=YELLOW=BLUE=PURPLE=CYAN=END=""
+    # else:
         """Defines colors for highlighting words in the terminal."""
         RED = "\033[0;31m"
         GREEN = "\033[0;32m"

@@ -46,14 +46,35 @@ class TessPointing(object):
         """
         return tvguidef(self.ra_deg, self.dec_deg, self.dstart)
 
-    def get_camera(self):
+    def get_camera(self, fallback=False):
         """
         which camera is the star on?
         """
         cams = self.get_13cameras()
         cams = cams[cams > 0]
         if np.shape(cams)[0] > 0:
-            return int(np.median(cams))
+            return int(np.max(cams))
+        else:
+            if fallback:
+                return self.get_camera_loop()
+            else:
+                return 0
+
+    def get_camera_loop(self):
+        """
+        which camera is the star on?
+        loop over starting points
+        """
+        step_arr = np.arange(0, 360, 0.5)
+        outarr = np.zeros_like(step_arr)
+        dstart_orig = np.copy(self.dstart)
+        for i, dstart in enumerate(np.arange(0, 360, 0.5)):
+            self.dstart = dstart
+            cams = self.get_13cameras()
+            outarr[i] = np.max(cams)
+        self.dstart = dstart_orig
+        if np.max(outarr) > 0:
+            return int(np.max(outarr))
         else:
             return 0
 
@@ -182,16 +203,27 @@ def check_observable(ra, dec,silent=False):
               " during Cycle 1.\nBut may be observable in Cycle 2" +
               Highlight.END)
     elif tessObj.is_observable() == 2:
+        whichCamera = tessObj.get_camera(fallback=True)
         outlst = tessObj.get_maxminmedave()
-        outlst = outlst + (tessObj.get_camera(),)
-        if silent:  return outlst
+        outlst = outlst + (whichCamera,)
+        if silent:
+            return outlst
 
         print(Highlight.GREEN +
               "Success! The target may be observable by TESS during Cycle 1." +
               Highlight.END)
-        print(Highlight.GREEN +
-              "Looks like it may fall into Camera {}.".format(
-                  tessObj.get_camera()) + Highlight.END)
+        if whichCamera != 0:
+            print(Highlight.GREEN +
+                  "Looks like it may fall into Camera {}.".format(
+                      whichCamera) + Highlight.END)
+        elif whichCamera == 0:
+            print(Highlight.GREEN +
+                  "Looks like it may fall into gap between cameras," +
+                  Highlight.END)
+            print(Highlight.GREEN +
+                  "but you should still propose this target because the final." +
+                  "pointing is not finalized" +
+                  Highlight.END)
 
         print(Highlight.GREEN +
               "Each sector is 27.4 days." +
