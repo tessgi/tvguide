@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import numpy as np
 from ._tvguide import tvguidef
-import argparse,sys
+import argparse, sys
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from . import Highlight
@@ -221,8 +221,8 @@ def check_observable(ra, dec,silent=False):
                   "Looks like it may fall into gap between cameras," +
                   Highlight.END)
             print(Highlight.GREEN +
-                  "but you should still propose this target because the final." +
-                  "pointing is not finalized" +
+                  "but you should still propose this target because the final" +
+                  "pointing is not finalized." +
                   Highlight.END)
 
         print(Highlight.GREEN +
