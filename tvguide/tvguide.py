@@ -148,14 +148,16 @@ def tvguide_csv(args=None):
     """
     exposes tvguide-csv to the command line
     """
-    parser = argparse.ArgumentParser(
-        description="Determine whether targets in a csv are observable using TESS.")
-    parser.add_argument('input_filename', nargs=1, type=str,
-                        help="Path to a comma-separated table containing "
-                             "columns 'ra, dec' (decimal degrees) "
-                             "or 'TIC number'.")
-    args = parser.parse_args(args)
-    input_fn = args.input_filename[0]
+    if args is None:
+        parser = argparse.ArgumentParser(
+            description="Determine whether targets in a csv are observable using TESS.")
+        parser.add_argument('input_filename', type=str,
+                            help="Path to a comma-separated table containing "
+                                 "columns 'ra, dec' (decimal degrees) "
+                                 "or 'TIC number'.")
+        args = parser.parse_args(args)
+        args = vals(args)
+    input_fn = args['input_filename']
     output_fn = input_fn + '-tvguide.csv'
     # First, try assuming the file has the classic "ra, dec format
     try:

@@ -43,7 +43,7 @@ def test_observable():
     # ra = 90
     # dec = -66.56071
     # southeclipticpole = TessPointing(ra, dec)
-    # assert southeclipticpole.get_camera(fallback=True) == 4    
+    # assert southeclipticpole.get_camera(fallback=True) == 4
 
     ra = 264.35182
     dec = -78.40052
