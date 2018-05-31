@@ -1,8 +1,9 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import numpy as np
 from ._tvguide import tvguidef
-import argparse, sys
+import argparse
+import sys
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from . import Highlight
@@ -29,9 +30,9 @@ class TessPointing(object):
         gc = SkyCoord(ra=self.ra_deg * u.degree, dec=self.dec_deg * u.degree,
                       frame='icrs')
         lat = gc.barycentrictrueecliptic.lat.value
-        if (lat > -6) & (lat < 6):
+        if (lat > -5.8) & (lat < 5.8):
             return 0
-        elif (lat >= 6):
+        elif (lat >= 5.8):
             return 1
         else:
             return 2
@@ -181,7 +182,7 @@ def tvguide_csv(args=None):
 #     pass
 
 
-def check_observable(ra, dec,silent=False):
+def check_observable(ra, dec, silent=False):
     """Determine whether targets are observable using TESS.
     Wrapper for tvguide.tvguide for use in Python scripts.
 
